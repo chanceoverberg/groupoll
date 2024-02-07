@@ -3,6 +3,34 @@
 @tailwind utilities;
 
 :root {
+  /* background-color: #0b011f; */
+  background-color: rgb(3,7,18);
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #00000000;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #332347;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #290155;
+}
+
+/* default values below */
+
+/* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -30,4 +58,4 @@ body {
   .text-balance {
     text-wrap: balance;
   }
-}
+} */
