@@ -11,7 +11,7 @@ export default function Page({ params }: { params: { id: string } }) {
             <div className="rounded-xl mb-4 border-solid border-2 border-violet-800
                     min-h-56 max-h-96 overflow-y-auto">
                 {surveyRows.map((survey, i) => {
-                    return (<SurveyRow key={i} id={survey.id} title={survey.title} 
+                    return (<SurveyRow key={i} groupId={params.id} id={survey.id} title={survey.title} 
                         created={survey.created} responseCount={survey.responseCount}/>);
                 })}
             </div>

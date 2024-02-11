@@ -18,4 +18,16 @@ export const surveyRows = [
     created: "Feb 5, 2024",
     responseCount: "27",
   },
+  {
+    id: "4",
+    title: "How long have you used Groupoll?",
+    created: "Feb 6, 2024",
+    responseCount: "97K",
+  },
+  {
+    id: "5",
+    title: "How cool is Groupoll?",
+    created: "Feb 6, 2024",
+    responseCount: "772M",
+  },
 ];
