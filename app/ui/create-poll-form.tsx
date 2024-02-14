@@ -9,7 +9,7 @@ interface IInputOptions {
     placeholder: string,
 }
 
-export default function Form() {
+export default function Form( { surveyGroupUrlId }: { surveyGroupUrlId: string }) {
     const initialOptions: IInputOptions[] = [
         {
             id: "option-1",
@@ -38,8 +38,10 @@ export default function Form() {
         }));
     }
 
+    const createPollWithId = createPoll.bind(null, surveyGroupUrlId);
+    
     return (
-        <form action={createPoll} className="flex flex-col text-left">
+        <form action={createPollWithId} className="flex flex-col text-left">
             <p className="pt-2">Title</p>
             <input
                 id="poll" 

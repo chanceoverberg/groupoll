@@ -1,7 +1,7 @@
 interface IProps {
     title: string,
     created: string,
-    responseCount: string
+    responseCount: number
 }
 
 export function ResultsHeader(props: IProps) {

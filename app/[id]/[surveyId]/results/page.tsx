@@ -1,24 +1,35 @@
+import { getPollResults } from "@/app/lib/actions";
 import { ResponseRow } from "@/app/ui/response-row";
 import { ResultsHeader } from "@/app/ui/results-header";
+import { PollResults } from "@/types/models";
 import Link from "next/link";
 
-export default function Page({ params }: { params: { id: string } }) {
-    return (
-      <main className="flex min-h-screen flex-col items-center text-center justify-center p-12">
-        <div className="w-3/5 max-h-full">
-          <ResultsHeader title="What is your favorite color?" created="Jan 1, 2024" responseCount="20"/>
-          <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 min-h-56 max-h-96 overflow-y-auto">
-            <ResponseRow id="1" option="Blue" responseCount="12"/>
-            <ResponseRow id="2" option="Red" responseCount="0"/>
-            <ResponseRow id="3" option="Purple" responseCount="3"/>
-            <ResponseRow id="4" option="Orange" responseCount="5"/>
-          </div>
+/* TODO: I THINK this page (and probably all other pages) are being cached. Look into how/when
+  to revalidate these. Not sure if can be done with revalidate path the way I want it to.
+  I also want the results page to update live (or every few seconds) if possible. */
+
+  // TODO: handle undefined more gracefully
+
+export default async function Page({ params }: { params: { id: string, surveyId: string } }) {
+  const results: PollResults | undefined = await getPollResults(params.id, +params.surveyId);
+  const createdAt = results?.createdAt?.toDateString();
+  return (
+    <main className="flex min-h-screen flex-col items-center text-center justify-center p-12">
+      <div className="w-3/5 max-h-full">
+        <ResultsHeader title={results?.question ?? ""} created={createdAt ?? ""} responseCount={results?.responseCount ?? 0}/>
+        <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 min-h-56 max-h-96 overflow-y-auto">
+          {results?.optionResults?.map((result) => {
+            return (
+              <ResponseRow option={result.option ?? ""} responseCount={result.responseCount ?? 0}/>
+            );
+          })}
         </div>
-        <Link href={`/${params.id}`} className="rounded-lg bg-violet-800 px-3 py-3 
-          text-sm font-medium text-white hover:bg-violet-900 w-80">
-          Back to group page
-        </Link>
-      </main>
-    );
-  }
+      </div>
+      <Link href={`/${params.id}`} className="rounded-lg bg-violet-800 px-3 py-3 
+        text-sm font-medium text-white hover:bg-violet-900 w-80">
+        Back to group page
+      </Link>
+    </main>
+  );
+}
   
