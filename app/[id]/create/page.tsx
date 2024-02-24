@@ -5,7 +5,7 @@ import Link from "next/link";
 // https://nextjs.org/learn/dashboard-app/mutating-data#4-pass-the-id-to-the-server-action
 export default function Page({ params }: { params: { id: string } }) {
   return (
-    <main className="flex min-h-screen flex-col items-center text-center justify-center p-12">
+    <main className="flex min-h-screen flex-col items-center text-center justify-center">
       <div>
         <h1 className="text-2xl">Create a new poll for group: {params.id}</h1>
         <Form surveyGroupUrlId={params.id}/>

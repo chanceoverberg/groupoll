@@ -1,5 +1,3 @@
-'use client';
-
 import { createGroup } from "../lib/actions";
 import { Button } from "@/app/ui/button"
 

@@ -14,13 +14,13 @@ export default async function Page({ params }: { params: { id: string, surveyId:
   const results: PollResults | undefined = await getPollResults(params.id, +params.surveyId);
   const createdAt = results?.createdAt?.toDateString();
   return (
-    <main className="flex min-h-screen flex-col items-center text-center justify-center p-12">
+    <main className="flex min-h-screen flex-col items-center text-center justify-center">
       <div className="w-3/5 max-h-full">
         <ResultsHeader title={results?.question ?? ""} created={createdAt ?? ""} responseCount={results?.responseCount ?? 0}/>
         <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 min-h-56 max-h-96 overflow-y-auto">
-          {results?.optionResults?.map((result) => {
+          {results?.optionResults?.map((result, key) => {
             return (
-              <ResponseRow option={result.option ?? ""} responseCount={result.responseCount ?? 0}/>
+              <ResponseRow key={key} option={result.option ?? ""} responseCount={result.responseCount ?? 0}/>
             );
           })}
         </div>

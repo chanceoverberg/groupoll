@@ -14,7 +14,7 @@ export function SurveyRow(props: IProps) {
     const { surveyGroupUrlId, urlId, question, created, responseCount } = props;
     const creationTime = created?.toDateString();
     return (
-        <Link href={`/${surveyGroupUrlId}/${urlId}/results`}>
+        <Link href={`/${surveyGroupUrlId}/${urlId}/vote`}>
             <div className="rounded-xl p-2 pb-6 mt-2 mb-2 ml-1 mr-1 border-solid border border-slate-700
                 min-h-16 flex flex-row justify-between hover:bg-violet-950 hover:border-violet-950 relative">
                 <div>
