@@ -3,6 +3,7 @@
 import { Button } from "@/app/ui/button"
 import { createPoll } from "../lib/actions";
 import { useState } from "react";
+import { SubmitButton } from "./submit-button";
 
 interface IInputOptions {
     id: string,
@@ -83,7 +84,7 @@ export default function Form( { surveyGroupUrlId }: { surveyGroupUrlId: string }
             <Button type="button" onClick={addOption}>Add Option</Button>
             <Button type="button" onClick={removeOption}>Remove Option</Button>
             <div></div>
-            <Button type="submit">Create Poll</Button>
+            <SubmitButton enabledMessage="Create Poll" disabledMessage="Creating..." />
         </form>
     );
 }

@@ -7,7 +7,6 @@ import { OptionResult, Poll, PollResults } from "@/types/models";
 import { revalidatePath } from "next/cache";
 
 // TODO: data validation and error handling including character and other limits
-// TODO: prevent form submissions while server actions are running
  
 export async function createGroup(formData: FormData) {
     const rawFormData = {
@@ -181,7 +180,6 @@ export async function getPoll(surveyGroupUrlId: string, surveyUrlId: number): Pr
     return poll;
 }
 
-// TODO: prevent button from being spammed. Maybe disable it somehow while vote is being submitted
 export async function submitVote(surveyGroupUrlId: string, surveyUrlId: number, formData: FormData) {
     // need to get the option ID to create a response that corresponds to that option.
     // If I can't get it from the form, then i have to db query then can maybe match the option name 

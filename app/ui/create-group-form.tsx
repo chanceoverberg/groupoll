@@ -1,5 +1,5 @@
 import { createGroup } from "../lib/actions";
-import { Button } from "@/app/ui/button"
+import { SubmitButton } from "./submit-button";
 
 export default function Form() {
     return (
@@ -18,7 +18,7 @@ export default function Form() {
                 focus-visible:outline-violet-700
                 bg-violet-1000"
             />
-            <Button type="submit">Create Group</Button>
+            <SubmitButton enabledMessage="Create Group" disabledMessage="Creating..." />
         </form>
     );
 }

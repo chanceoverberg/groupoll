@@ -1,8 +1,8 @@
 import { getPoll, submitVote } from "../lib/actions";
-import { Button } from "@/app/ui/button"
 import { OptionRow } from "./option-row";
 import { Poll } from "@/types/models";
 import Link from "next/link";
+import { SubmitButton } from "./submit-button";
 
 interface IProps {
     surveyGroupUrlId: string, 
@@ -25,7 +25,7 @@ export default async function Form(props: IProps) {
                     );
                     })}
                 </div>
-            <Button>Vote</Button>
+                <SubmitButton enabledMessage="Vote" disabledMessage="Submitting..." />
             <Link href={`/${surveyGroupUrlId}/${urlId}/results`} className="rounded-lg bg-violet-800 px-3 py-3 text-sm font-medium text-white hover:bg-violet-900 w-80">
                 Results
             </Link>
