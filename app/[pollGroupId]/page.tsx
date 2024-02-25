@@ -1,23 +1,22 @@
 import Link from "next/link";
 import { PollRow } from "../ui/poll-row";
-import { getPollsForGroup } from "../lib/actions";
-import { Poll } from "@/types/models";
-
-// TODO: add back to group button in layout so it applies to all children
-// Change group id to group name for showing the current group
+import { getPollGroup, getPollsForGroup } from "../lib/actions";
 
 export default async function Page({ params }: { params: { pollGroupId: string } }) {
-  const polls: Poll[] = await getPollsForGroup(params.pollGroupId);
+  const data = await Promise.all([
+    getPollGroup(params.pollGroupId),
+    getPollsForGroup(params.pollGroupId),
+  ]);
 
   return (
     <main className="flex h-screen flex-col items-center justify-center">
-      <h1 className="text-2xl">Main page for group: {params.pollGroupId}</h1>
-      <div className="w-full sm:w-4/5 xl:w-3/5 2xl:w-2/5 h-4/5 pl-3 pr-3">
+      <h1 className="text-2xl">{data[0]?.name}</h1>
+      <div className="w-full sm:w-4/5 xl:w-3/5 2xl:w-2/5 max-h-4/5 pl-3 pr-3">
         <div
           className="rounded-xl mb-4 border-solid border-2 border-violet-800
                         min-h-56 h-full overflow-y-auto"
         >
-          {polls.map((poll, i) => {
+          {data[1].map((poll, i) => {
             let responseCount = 0;
             poll.options?.map((option) => {
               responseCount += option.responses?.length ?? 0;

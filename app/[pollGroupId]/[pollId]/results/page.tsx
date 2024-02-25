@@ -1,8 +1,8 @@
 import { getPollResults } from "@/app/lib/actions";
+import BackToGroup from "@/app/ui/back-to-group";
 import { ResponseRow } from "@/app/ui/response-row";
 import { ResultsHeader } from "@/app/ui/results-header";
 import { PollResults } from "@/types/models";
-import Link from "next/link";
 
 /* TODO: I THINK this page (and probably all other pages) are being cached. Look into how/when
   to revalidate these. Not sure if can be done with revalidate path the way I want it to.
@@ -36,14 +36,10 @@ export default async function Page({
             );
           })}
         </div>
+        <div className="flex flex-row">
+          <BackToGroup pollGroupId={params.pollGroupId} />
+        </div>
       </div>
-      <Link
-        href={`/${params.pollGroupId}`}
-        className="rounded-lg bg-violet-800 px-3 py-3 
-        text-sm font-medium text-white hover:bg-violet-900 w-80"
-      >
-        Back to group page
-      </Link>
     </main>
   );
 }

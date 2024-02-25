@@ -3,6 +3,7 @@ import { OptionRow } from "./option-row";
 import { Poll } from "@/types/models";
 import Link from "next/link";
 import { SubmitButton } from "./submit-button";
+import BackToGroup from "./back-to-group";
 
 interface IProps {
   pollGroupId: string;
@@ -23,13 +24,18 @@ export default async function Form(props: IProps) {
           return <OptionRow key={index} option={option.option ?? ""} id={option.id} />;
         })}
       </div>
-      <SubmitButton enabledMessage="Vote" disabledMessage="Submitting..." />
-      <Link
-        href={`/${pollGroupId}/${urlId}/results`}
-        className="rounded-lg bg-violet-800 px-3 py-3 text-sm font-medium text-white hover:bg-violet-900 w-80"
-      >
-        Results
-      </Link>
+      <div className="flex flex-row justify-between relative">
+        <BackToGroup pollGroupId={pollGroupId} />
+        <div>
+          <SubmitButton enabledMessage="Vote" disabledMessage="Submitting..." />
+          <Link
+            href={`/${pollGroupId}/${urlId}/results`}
+            className="rounded-lg bg-violet-800 px-3 py-3 text-sm font-medium text-white hover:bg-violet-900 w-80"
+          >
+            Results
+          </Link>
+        </div>
+      </div>
     </form>
   );
 }

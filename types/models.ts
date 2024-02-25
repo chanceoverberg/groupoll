@@ -22,6 +22,7 @@ export interface Response {
 }
 
 export interface PollResults {
+  pollGroupName?: string;
   question?: string;
   responseCount?: number;
   createdAt?: Date;

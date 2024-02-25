@@ -8,7 +8,6 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 // TODO: data validation and error handling including character and other limits
-// TODO: minimize db fetch calls by providing enough info (like ID) to create with a single request
 
 export async function createGroup(formData: FormData) {
   const rawFormData = {
@@ -103,31 +102,28 @@ export async function createPoll(groupId: string, formData: FormData) {
   redirect(`/${groupId}/${createdPoll.urlId}/vote`);
 }
 
-export async function getPollsForGroup(pollGroupUrlId: string) {
-  console.log("getting polls for group " + pollGroupUrlId);
-  const pollGroup = await prisma.pollGroup.findUnique({ where: { id: pollGroupUrlId } });
-  if (!pollGroup?.id) {
-    console.log("Could not find a poll group with ID " + pollGroup?.id);
-    return [];
-  }
+export async function getPollsForGroup(pollGroupId: string) {
+  console.log("getting polls for group " + pollGroupId);
+
   const polls = await prisma.poll.findMany({
-    where: { pollGroupId: pollGroup.id },
+    where: { pollGroupId: pollGroupId },
     include: { options: { include: { responses: true } } },
   });
+
   return polls;
 }
 
-export async function getPollResults(pollGroupUrlId: string, pollUrlId: number) {
-  const pollGroup = await prisma.pollGroup.findUnique({ where: { id: pollGroupUrlId } });
-  if (!pollGroup?.id) {
-    console.log("Could not find a poll group with ID " + pollGroup?.id);
-    return;
-  }
+export async function getPollGroup(pollGroupId: string) {
+  const pollGroup = await prisma.pollGroup.findUnique({ where: { id: pollGroupId } });
+  return pollGroup ?? undefined;
+}
+
+export async function getPollResults(pollGroupId: string, pollUrlId: number) {
   const poll = await prisma.poll.findUnique({
     where: {
       urlId_pollGroupId: {
         urlId: pollUrlId,
-        pollGroupId: pollGroup.id,
+        pollGroupId: pollGroupId,
       },
     },
     include: {
@@ -140,7 +136,7 @@ export async function getPollResults(pollGroupUrlId: string, pollUrlId: number) 
   });
 
   if (!poll) {
-    console.log("Could not find a poll in group " + pollGroup.id + " with urlId " + pollGroupUrlId);
+    console.log("Could not find a poll in group with id " + pollGroupId);
     return;
   }
 
@@ -166,20 +162,12 @@ export async function getPollResults(pollGroupUrlId: string, pollUrlId: number) 
   return pollResults;
 }
 
-export async function getPoll(
-  pollGroupUrlId: string,
-  pollUrlId: number
-): Promise<Poll | undefined> {
-  const pollGroup = await prisma.pollGroup.findUnique({ where: { id: pollGroupUrlId } });
-  if (!pollGroup?.id) {
-    console.log("Could not find a poll group with ID " + pollGroup?.id);
-    return;
-  }
+export async function getPoll(pollGroupId: string, pollUrlId: number): Promise<Poll | undefined> {
   const poll = await prisma.poll.findUnique({
     where: {
       urlId_pollGroupId: {
         urlId: pollUrlId,
-        pollGroupId: pollGroup.id,
+        pollGroupId: pollGroupId,
       },
     },
     include: {
@@ -188,7 +176,7 @@ export async function getPoll(
   });
 
   if (!poll) {
-    console.log("Could not find a poll in group " + pollGroup.id + " with urlId " + pollGroupUrlId);
+    console.log("Could not find a poll in group with id " + pollGroupId);
     return;
   }
 
@@ -196,25 +184,30 @@ export async function getPoll(
 }
 
 const VoteFormSchema = z.object({
-  option: z.string(),
+  option: z.string({ invalid_type_error: "Please select an option." }),
 });
 
-export async function submitVote(pollGroupUrlId: string, pollUrlId: number, formData: FormData) {
-  const { option } = VoteFormSchema.parse({
+export async function submitVote(pollGroupId: string, pollUrlId: number, formData: FormData) {
+  const validatedFields = VoteFormSchema.safeParse({
     option: formData.get("option"),
   });
 
-  if (option) {
-    await prisma.response.create({
-      data: {
-        optionId: option,
-        ipAddress: "fake.ip.address",
-      },
-    });
-
-    revalidatePath(`/${pollGroupUrlId}/${pollUrlId}`);
-    redirect(`/${pollGroupUrlId}/${pollUrlId}/results`);
-  } else {
-    console.log("No option selected");
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "No option selected. Cannot submit vote.",
+    };
   }
+
+  const { option } = validatedFields.data;
+
+  await prisma.response.create({
+    data: {
+      optionId: option,
+      ipAddress: "fake.ip.address",
+    },
+  });
+
+  revalidatePath(`/${pollGroupId}/${pollUrlId}`);
+  redirect(`/${pollGroupId}/${pollUrlId}/results`);
 }

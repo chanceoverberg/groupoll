@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Groupoll",
-  description: "Groups for polls with anonymous responses",
+  description: "Groups for polls with anonymous creation and responses",
 };
 
 export default function RootLayout({
@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} text-white`}>
         <Link href="/" className="absolute top-2 left-2 text-white">
-          <HomeIcon className="w-5 h-5"/>
+          <HomeIcon className="w-5 h-5" />
         </Link>
         {children}
       </body>

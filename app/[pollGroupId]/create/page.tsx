@@ -1,5 +1,5 @@
+import BackToGroup from "@/app/ui/back-to-group";
 import Form from "@/app/ui/create-poll-form";
-import Link from "next/link";
 
 // Reference for passing info to server action using binding:
 // https://nextjs.org/learn/dashboard-app/mutating-data#4-pass-the-id-to-the-server-action
@@ -10,13 +10,7 @@ export default function Page({ params }: { params: { pollGroupId: string } }) {
         <h1 className="text-2xl">Create a new poll for group: {params.pollGroupId}</h1>
         <Form pollGroupId={params.pollGroupId} />
       </div>
-      <Link
-        href={`/${params.pollGroupId}`}
-        className="rounded-lg bg-violet-800 px-3 py-3 
-          text-sm font-medium text-white hover:bg-violet-900 w-80"
-      >
-        Back to group page
-      </Link>
+      <BackToGroup pollGroupId={params.pollGroupId} />
     </main>
   );
 }
