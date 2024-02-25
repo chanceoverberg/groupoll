@@ -8,55 +8,34 @@ datasource db {
   relationMode = "prisma"
 }
 
-// TODO: remove this test model
-model Product {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String
-  price       Decimal
-  image       String
-  category    Category? @relation(fields: [category_id], references: [id])
-  category_id Int
-
-  @@index([category_id])
-}
-
-// TODO: remove this test model
-model Category {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String
-  products    Product[]
-}
-
-model SurveyGroup {
+model PollGroup {
   id        String   @id @db.VarChar(12)
   name      String
   createdAt DateTime @default(now())
-  surveys   Survey[]
+  polls     Poll[]
 }
 
-model Survey {
-  id            String      @id @default(uuid())
-  urlId         Int
-  question      String
-  createdAt     DateTime    @default(now())
-  surveyGroupId String
-  surveyGroup   SurveyGroup @relation(fields: [surveyGroupId], references: [id])
-  options       Option[]
+model Poll {
+  id          String    @id @default(uuid())
+  urlId       Int
+  question    String
+  createdAt   DateTime  @default(now())
+  pollGroupId String
+  pollGroup   PollGroup @relation(fields: [pollGroupId], references: [id])
+  options     Option[]
 
-  @@unique([urlId, surveyGroupId])
-  @@index([surveyGroupId])
+  @@unique([urlId, pollGroupId])
+  @@index([pollGroupId])
 }
 
 model Option {
   id        String     @id @default(uuid())
   option    String
-  surveyId  String
-  survey    Survey     @relation(fields: [surveyId], references: [id])
+  pollId    String
+  poll      Poll       @relation(fields: [pollId], references: [id])
   responses Response[]
 
-  @@index([surveyId])
+  @@index([pollId])
 }
 
 model Response {

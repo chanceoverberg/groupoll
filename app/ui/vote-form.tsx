@@ -5,30 +5,31 @@ import Link from "next/link";
 import { SubmitButton } from "./submit-button";
 
 interface IProps {
-    surveyGroupUrlId: string, 
-    urlId: string
+  pollGroupId: string;
+  urlId: string;
 }
 
 export default async function Form(props: IProps) {
-    const { surveyGroupUrlId, urlId } = props;
-    const poll: Poll | undefined = await getPoll(surveyGroupUrlId, +urlId);
+  const { pollGroupId, urlId } = props;
+  const poll: Poll | undefined = await getPoll(pollGroupId, +urlId);
 
-    const submiteVoteWithId = submitVote.bind(null, surveyGroupUrlId, +urlId);
+  const submiteVoteWithId = submitVote.bind(null, pollGroupId, +urlId);
 
-    return (
-        <form action={submiteVoteWithId}>
-                <h1 className="text-2xl">{poll?.question}</h1>
-                <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 min-h-56 h-full overflow-y-auto">
-                    {poll?.options?.map((option, index) => {
-                    return (
-                        <OptionRow key={index} option={option.option ?? ""} id={option.id} />
-                    );
-                    })}
-                </div>
-                <SubmitButton enabledMessage="Vote" disabledMessage="Submitting..." />
-            <Link href={`/${surveyGroupUrlId}/${urlId}/results`} className="rounded-lg bg-violet-800 px-3 py-3 text-sm font-medium text-white hover:bg-violet-900 w-80">
-                Results
-            </Link>
-        </form>
-    );
+  return (
+    <form action={submiteVoteWithId}>
+      <h1 className="text-2xl">{poll?.question}</h1>
+      <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 min-h-56 h-full overflow-y-auto">
+        {poll?.options?.map((option, index) => {
+          return <OptionRow key={index} option={option.option ?? ""} id={option.id} />;
+        })}
+      </div>
+      <SubmitButton enabledMessage="Vote" disabledMessage="Submitting..." />
+      <Link
+        href={`/${pollGroupId}/${urlId}/results`}
+        className="rounded-lg bg-violet-800 px-3 py-3 text-sm font-medium text-white hover:bg-violet-900 w-80"
+      >
+        Results
+      </Link>
+    </form>
+  );
 }
