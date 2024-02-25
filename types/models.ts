@@ -1,23 +1,23 @@
 export interface Poll {
-    id: number,
+    id: string,
     urlId: number,
     question: string,
     createdAt: Date,
-    surveyGroupId: number,
+    surveyGroupId: string,
     options?: Option[]
 }
 
 export interface Option {
-    id: number,
+    id: string,
     option: string,
-    surveyId: number
+    surveyId: string
     responses?: Response[]
 }
 
 export interface Response {
-    id: number,
+    id: string,
     createdAt: Date,
-    optionId: number,
+    optionId: string,
     ipAddress: string
 }
 

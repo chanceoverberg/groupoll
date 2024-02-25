@@ -31,7 +31,7 @@ export async function createGroup(formData: FormData) {
 
     await prisma.surveyGroup.create({
         data: {
-            urlId: urlId,
+            id: urlId,
             name: groupName,
         }
     });
@@ -67,7 +67,7 @@ export async function createPoll(surveyGroupUrlId: string, formData: FormData) {
         return;
     }
 
-    const group = await prisma.surveyGroup.findUnique({where: {urlId: surveyGroupUrlId}, include: {surveys: true}});
+    const group = await prisma.surveyGroup.findUnique({where: {id: surveyGroupUrlId}, include: {surveys: true}});
 
     if (!group) {
         console.log("Error: Could not find group with urlId " + surveyGroupUrlId);
@@ -98,7 +98,7 @@ export async function createPoll(surveyGroupUrlId: string, formData: FormData) {
 
 export async function getPollsForGroup(surveyGroupUrlId: string) {
     console.log("getting polls for group " + surveyGroupUrlId);
-    const surveyGroup = await prisma.surveyGroup.findUnique({where: {urlId: surveyGroupUrlId}});
+    const surveyGroup = await prisma.surveyGroup.findUnique({where: {id: surveyGroupUrlId}});
     if (!surveyGroup?.id) {
         console.log("Could not find a poll group with ID " + surveyGroup?.id);
         return [];
@@ -108,7 +108,7 @@ export async function getPollsForGroup(surveyGroupUrlId: string) {
 }
 
 export async function getPollResults(surveyGroupUrlId: string, surveyUrlId: number) {
-    const surveyGroup = await prisma.surveyGroup.findUnique({where: {urlId: surveyGroupUrlId}});
+    const surveyGroup = await prisma.surveyGroup.findUnique({where: {id: surveyGroupUrlId}});
     if (!surveyGroup?.id) {
         console.log("Could not find a poll group with ID " + surveyGroup?.id);
         return;
@@ -157,7 +157,7 @@ export async function getPollResults(surveyGroupUrlId: string, surveyUrlId: numb
 }
 
 export async function getPoll(surveyGroupUrlId: string, surveyUrlId: number): Promise<Poll | undefined> {
-    const surveyGroup = await prisma.surveyGroup.findUnique({where: {urlId: surveyGroupUrlId}});
+    const surveyGroup = await prisma.surveyGroup.findUnique({where: {id: surveyGroupUrlId}});
     if (!surveyGroup?.id) {
         console.log("Could not find a poll group with ID " + surveyGroup?.id);
         return;
@@ -183,7 +183,7 @@ export async function getPoll(surveyGroupUrlId: string, surveyUrlId: number): Pr
 }
 
 const VoteFormSchema = z.object({
-    option: z.coerce.number()
+    option: z.string()
 });
 
 export async function submitVote(surveyGroupUrlId: string, surveyUrlId: number, formData: FormData) {

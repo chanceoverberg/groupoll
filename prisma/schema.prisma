@@ -30,19 +30,18 @@ model Category {
 }
 
 model SurveyGroup {
-  id        Int      @id @default(autoincrement())
-  urlId     String   @unique @db.VarChar(12)
+  id        String   @id @db.VarChar(12)
   name      String
   createdAt DateTime @default(now())
   surveys   Survey[]
 }
 
 model Survey {
-  id            Int         @id @default(autoincrement())
+  id            String      @id @default(uuid())
   urlId         Int
   question      String
   createdAt     DateTime    @default(now())
-  surveyGroupId Int
+  surveyGroupId String
   surveyGroup   SurveyGroup @relation(fields: [surveyGroupId], references: [id])
   options       Option[]
 
@@ -51,9 +50,9 @@ model Survey {
 }
 
 model Option {
-  id        Int        @id @default(autoincrement())
+  id        String     @id @default(uuid())
   option    String
-  surveyId  Int
+  surveyId  String
   survey    Survey     @relation(fields: [surveyId], references: [id])
   responses Response[]
 
@@ -61,9 +60,9 @@ model Option {
 }
 
 model Response {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  optionId  Int
+  optionId  String
   option    Option   @relation(fields: [optionId], references: [id])
   ipAddress String
 

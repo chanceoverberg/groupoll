@@ -1,6 +1,6 @@
 interface IProps {
     option: string,
-    id: number
+    id: string
 }
 
 export function OptionRow(props: IProps) {
