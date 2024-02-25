@@ -15,9 +15,9 @@ export default async function Page({ params }: { params: { id: string, surveyId:
   const createdAt = results?.createdAt?.toDateString();
   return (
     <main className="flex min-h-screen flex-col items-center text-center justify-center">
-      <div className="w-3/5 max-h-full">
+      <div className="w-full sm:w-4/5 xl:w-3/5 2xl:w-2/5 h-4/5 pl-3 pr-3">
         <ResultsHeader title={results?.question ?? ""} created={createdAt ?? ""} responseCount={results?.responseCount ?? 0}/>
-        <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 min-h-56 max-h-96 overflow-y-auto">
+        <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 min-h-56 h-full overflow-y-auto">
           {results?.optionResults?.map((result, key) => {
             return (
               <ResponseRow key={key} option={result.option ?? ""} responseCount={result.responseCount ?? 0}/>

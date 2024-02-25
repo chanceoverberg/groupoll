@@ -5,8 +5,10 @@ import prisma from "./prisma";
 import { generateUrlId } from "@/utils/url-id";
 import { OptionResult, Poll, PollResults } from "@/types/models";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 // TODO: data validation and error handling including character and other limits
+// TODO: minimize db fetch calls by providing enough info (like ID) to create with a single request
  
 export async function createGroup(formData: FormData) {
     const rawFormData = {
@@ -81,7 +83,7 @@ export async function createPoll(surveyGroupUrlId: string, formData: FormData) {
         });
     });
 
-    await prisma.survey.create({data: {
+    const createdSurvey = await prisma.survey.create({data: {
         urlId: surveyUrlId,
         question: pollTitle,
         surveyGroupId: group.id,
@@ -91,7 +93,7 @@ export async function createPoll(surveyGroupUrlId: string, formData: FormData) {
     }});
 
     revalidatePath(`/${surveyGroupUrlId}`);
-    redirect(`/${surveyGroupUrlId}`);
+    redirect(`/${surveyGroupUrlId}/${createdSurvey.urlId}/vote`);
 }
 
 export async function getPollsForGroup(surveyGroupUrlId: string) {
@@ -180,21 +182,18 @@ export async function getPoll(surveyGroupUrlId: string, surveyUrlId: number): Pr
     return poll;
 }
 
+const VoteFormSchema = z.object({
+    option: z.coerce.number()
+});
+
 export async function submitVote(surveyGroupUrlId: string, surveyUrlId: number, formData: FormData) {
-    // need to get the option ID to create a response that corresponds to that option.
-    // If I can't get it from the form, then i have to db query then can maybe match the option name 
-    // from the form to the option name that gets returned from the db query
-    const vote = formData.get('option');
-    const poll = await getPoll(surveyGroupUrlId, surveyUrlId);
-
-    const selectedOption = poll?.options?.find((option) => option.option == vote);
-
-    console.log("You voted for " + selectedOption?.id);
-
-
-    if (selectedOption) {
+    const { option } = VoteFormSchema.parse({
+        option: formData.get('option')
+    })
+    
+    if (option) {
         await prisma.response.create({data: {
-            optionId: selectedOption?.id,
+            optionId: option,
             ipAddress: "fake.ip.address",
         }});
 

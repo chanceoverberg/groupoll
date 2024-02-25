@@ -18,10 +18,10 @@ export default async function Form(props: IProps) {
     return (
         <form action={submiteVoteWithId}>
                 <h1 className="text-2xl">{poll?.question}</h1>
-                <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 min-h-56 max-h-96 overflow-y-auto">
+                <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 min-h-56 h-full overflow-y-auto">
                     {poll?.options?.map((option, index) => {
                     return (
-                        <OptionRow key={index} option={option.option ?? ""} index={index.toString()} />
+                        <OptionRow key={index} option={option.option ?? ""} id={option.id} />
                     );
                     })}
                 </div>
