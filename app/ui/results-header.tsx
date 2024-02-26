@@ -9,9 +9,9 @@ export function ResultsHeader(props: IProps) {
   return (
     <div>
       <h1 className="text-2xl">{title}</h1>
-      <div className="text-left text-md flex flex-row justify-between">
+      <div className="text-md flex flex-row justify-between">
         <p>Total votes: {responseCount}</p>
-        <p>Created on {created}</p>
+        <p className="w-3/5 text-right">Created at {created}</p>
       </div>
     </div>
   );

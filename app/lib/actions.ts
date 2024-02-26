@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 // TODO: data validation and error handling including character and other limits
+// reference: https://nextjs.org/learn/dashboard-app/improving-accessibility
 
 export async function createGroup(formData: FormData) {
   const rawFormData = {
@@ -108,13 +109,25 @@ export async function createPoll(pollGroupId: string, formData: FormData) {
   redirect(`/${pollGroupId}/${createdPoll.urlId}/vote`);
 }
 
-// TODO: sort by created date, most recent at the top
 export async function getPollsForGroup(pollGroupId: string) {
   console.log("getting polls for group " + pollGroupId);
 
   const polls = await prisma.poll.findMany({
-    where: { pollGroupId: pollGroupId },
-    include: { options: { include: { responses: true } } },
+    orderBy: [
+      {
+        createdAt: "desc",
+      },
+    ],
+    where: {
+      pollGroupId: pollGroupId,
+    },
+    include: {
+      options: {
+        include: {
+          responses: true,
+        },
+      },
+    },
   });
 
   return polls;
@@ -229,6 +242,7 @@ const WebhookFormSchema = z.object({
     .regex(discordWebhookRegex, "Only Discord webhooks are supported right now"),
 });
 
+// TODO: add a toast with success/failure status
 export async function registerWebhook(pollGroupId: string, formData: FormData) {
   const validatedFields = WebhookFormSchema.safeParse({
     webhook: formData.get("webhook"),

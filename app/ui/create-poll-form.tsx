@@ -10,6 +10,8 @@ interface IInputOptions {
   placeholder: string;
 }
 
+// TODO: add data validation here including min and max character length
+
 export default function Form({ pollGroupId }: { pollGroupId: string }) {
   const initialOptions: IInputOptions[] = [
     {
@@ -25,15 +27,24 @@ export default function Form({ pollGroupId }: { pollGroupId: string }) {
   const [options, setOptions] = useState<IInputOptions[]>(initialOptions);
 
   const addOption = () => {
+    const length = options.length;
+
+    if (length >= 16) {
+      return;
+    }
+
     const inputOptions: IInputOptions = {
-      id: `option-${options.length + 1}`,
-      placeholder: `Option ${options.length + 1}`,
+      id: `option-${length + 1}`,
+      placeholder: `Option ${length + 1}`,
     };
     setOptions([...options, inputOptions]);
   };
 
   const removeOption = () => {
     const length = options.length;
+    if (length == 2) {
+      return;
+    }
     setOptions(
       options.filter((option) => {
         return option.id != `option-${length}`;

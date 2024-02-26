@@ -12,7 +12,7 @@ interface IProps {
 
 export function PollRow(props: IProps) {
   const { pollGroupId, urlId, question, created, responseCount } = props;
-  const creationTime = created?.toDateString();
+  const creationTime = created?.toLocaleTimeString() + " - " + created?.toDateString();
   return (
     <Link href={`/${pollGroupId}/${urlId}/vote`}>
       <div

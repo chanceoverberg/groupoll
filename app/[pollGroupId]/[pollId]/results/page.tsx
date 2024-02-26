@@ -16,16 +16,18 @@ export default async function Page({
   params: { pollGroupId: string; pollId: string };
 }) {
   const results: PollResults | undefined = await getPollResults(params.pollGroupId, +params.pollId);
-  const createdAt = results?.createdAt?.toDateString();
+  const createdAt =
+    results?.createdAt?.toLocaleTimeString() + " on " + results?.createdAt?.toDateString();
+
   return (
-    <main className="flex h-screen flex-col items-center text-center justify-center pt-12 pb-32">
+    <main className="flex h-screen flex-col items-center text-center justify-center pt-6 pb-36">
       <div className="w-full sm:w-4/5 xl:w-3/5 2xl:w-2/5 max-h-full pl-3 pr-3">
         <ResultsHeader
           title={results?.question ?? ""}
           created={createdAt ?? ""}
           responseCount={results?.responseCount ?? 0}
         />
-        <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 min-h-56 h-full overflow-y-auto">
+        <div className="rounded-xl mb-2 border-solid border-2 border-violet-800 min-h-56 h-full overflow-y-auto">
           {results?.optionResults?.map((result, key) => {
             return (
               <ResponseRow
