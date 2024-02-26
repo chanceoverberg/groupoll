@@ -1,3 +1,15 @@
+export interface Webhook {
+  id: string;
+  pollGroups?: PollGroup[];
+}
+
+export interface PollGroup {
+  id: string;
+  name: string;
+  webhooks?: Webhook[];
+  polls?: Poll[];
+}
+
 export interface Poll {
   id: string;
   urlId: number;

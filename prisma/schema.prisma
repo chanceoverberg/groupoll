@@ -8,11 +8,17 @@ datasource db {
   relationMode = "prisma"
 }
 
+model Webhook {
+  id         String      @id
+  pollGroups PollGroup[]
+}
+
 model PollGroup {
-  id        String   @id @db.VarChar(12)
+  id        String    @id @db.VarChar(12)
   name      String
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   polls     Poll[]
+  webhooks  Webhook[]
 }
 
 model Poll {

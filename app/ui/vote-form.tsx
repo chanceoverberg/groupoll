@@ -17,9 +17,9 @@ export default async function Form(props: IProps) {
   const submiteVoteWithId = submitVote.bind(null, pollGroupId, +urlId);
 
   return (
-    <form action={submiteVoteWithId}>
+    <form action={submiteVoteWithId} className="h-full pb-8">
       <h1 className="text-2xl">{poll?.question}</h1>
-      <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 min-h-56 h-full overflow-y-auto">
+      <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 h-full overflow-y-auto">
         {poll?.options?.map((option, index) => {
           return <OptionRow key={index} option={option.option ?? ""} id={option.id} />;
         })}

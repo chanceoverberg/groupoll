@@ -82,15 +82,19 @@ export default function Form({ pollGroupId }: { pollGroupId: string }) {
           />
         );
       })}
-      <div></div>
-      <Button type="button" onClick={addOption}>
-        Add Option
-      </Button>
-      <Button type="button" onClick={removeOption}>
-        Remove Option
-      </Button>
-      <div></div>
-      <SubmitButton enabledMessage="Create Poll" disabledMessage="Creating..." />
+      <div className="flex flex-row items-center">
+        <Button type="button" onClick={addOption} className="w-2/5">
+          Add Option
+        </Button>
+        <Button type="button" onClick={removeOption} className="w-2/5">
+          Remove Option
+        </Button>
+        <SubmitButton
+          enabledMessage="Create Poll"
+          disabledMessage="Creating..."
+          className="w-2/5"
+        />
+      </div>
     </form>
   );
 }
