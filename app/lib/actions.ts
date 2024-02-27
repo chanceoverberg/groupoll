@@ -6,8 +6,11 @@ import { generateUrlId } from "@/utils/url-id";
 import { OptionResult, Poll, PollGroup, PollResults } from "@/types/models";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import ip from "ip";
 
-// TODO: data validation and error handling including character and other limits
+const testIpAddress = "e";
+
+// TODO (ITF): data validation and error handling including character and other limits
 // reference: https://nextjs.org/learn/dashboard-app/improving-accessibility
 
 export async function createGroup(formData: FormData) {
@@ -71,7 +74,14 @@ export async function createPoll(pollGroupId: string, formData: FormData) {
 
   const pollGroup = await prisma.pollGroup.findUnique({
     where: { id: pollGroupId },
-    include: { polls: true, webhooks: true },
+    include: {
+      polls: {
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
+      webhooks: true,
+    },
   });
 
   if (!pollGroup) {
@@ -79,7 +89,12 @@ export async function createPoll(pollGroupId: string, formData: FormData) {
     return;
   }
 
-  const pollUrlId = pollGroup.polls.length + 1;
+  // Set the new poll's URL ID to be 1 higher than the URL ID of the newest poll in the group
+  const pollCount = pollGroup.polls.length;
+  let pollUrlId = 1;
+  if (pollCount > 0) {
+    pollUrlId = pollGroup.polls[pollCount - 1].urlId + 1;
+  }
 
   let options: { option: string }[] = [];
   filteredOptions.map((pollOption) => {
@@ -200,16 +215,41 @@ export async function getPoll(pollGroupId: string, pollUrlId: number): Promise<P
     return;
   }
 
+  const ipAddress = ip.address();
+
+  if (await getHasVoted(poll.id, ipAddress)) {
+    redirect(`/${pollGroupId}/${poll.urlId}/results`);
+  }
+
   return poll;
 }
 
-// TODO: check ip address and don't allow voting if they have already voted
+export async function getHasVoted(pollId: string | undefined, ipAddress: string): Promise<boolean> {
+  if (!pollId) {
+    return false;
+  }
+
+  const response = await prisma.response.findUnique({
+    where: {
+      ipAddress_pollId: {
+        ipAddress: ipAddress,
+        pollId: pollId,
+      },
+    },
+  });
+
+  return response == null ? false : true;
+}
 
 const VoteFormSchema = z.object({
   option: z.string({ invalid_type_error: "Please select an option." }),
 });
 
-export async function submitVote(pollGroupId: string, pollUrlId: number, formData: FormData) {
+export async function submitVote(pollGroupId: string, poll: Poll | undefined, formData: FormData) {
+  if (!poll) {
+    return;
+  }
+
   const validatedFields = VoteFormSchema.safeParse({
     option: formData.get("option"),
   });
@@ -223,15 +263,23 @@ export async function submitVote(pollGroupId: string, pollUrlId: number, formDat
 
   const { option } = validatedFields.data;
 
-  await prisma.response.create({
-    data: {
-      optionId: option,
-      ipAddress: "fake.ip.address",
-    },
-  });
+  const ipAddress = ip.address();
 
-  revalidatePath(`/${pollGroupId}/${pollUrlId}`);
-  redirect(`/${pollGroupId}/${pollUrlId}/results`);
+  try {
+    await prisma.response.create({
+      data: {
+        pollId: poll.id,
+        optionId: option,
+        ipAddress: ipAddress,
+      },
+    });
+  } catch (err) {
+    console.log("Error submiting vote:");
+    console.log(err);
+  }
+
+  revalidatePath(`/${pollGroupId}/${poll.urlId}`);
+  redirect(`/${pollGroupId}/${poll.urlId}/results`);
 }
 
 const discordWebhookRegex = /https:\/\/discord\.com\/api\/webhooks\/.+\/.+/;
@@ -242,7 +290,7 @@ const WebhookFormSchema = z.object({
     .regex(discordWebhookRegex, "Only Discord webhooks are supported right now"),
 });
 
-// TODO: add a toast with success/failure status
+// TODO (u/o): show the error message when it fails using form state
 export async function registerWebhook(pollGroupId: string, formData: FormData) {
   const validatedFields = WebhookFormSchema.safeParse({
     webhook: formData.get("webhook"),
@@ -273,13 +321,20 @@ export async function registerWebhook(pollGroupId: string, formData: FormData) {
         console.log(responseJSON);
       } catch (err) {
         console.log(err);
+        return {
+          errors: webhook,
+          message: "There was an error validating the webhook URL. Please try again later.",
+        };
       }
       return;
     }
   } catch (err) {
     console.log("Error validating the webhook URL:");
     console.log(err);
-    return;
+    return {
+      errors: webhook,
+      message: "There was an error validating the webhook URL. Please try again later.",
+    };
   }
 
   await prisma.pollGroup.update({
@@ -301,11 +356,12 @@ export async function registerWebhook(pollGroupId: string, formData: FormData) {
   });
 
   console.log("Webhook URL registered to group " + pollGroupId + ": " + webhook);
+  redirect(`/${pollGroupId}`);
 }
 
-// TODO: add a toast if this fails with the message from the response
+// TODO (u/o): add a toast if this fails with the message from the response
 export async function postDiscordMessage(pollGroup: PollGroup, poll: Poll, webhookUrl: string) {
-  const title: string = "New poll created for " + pollGroup.name + "!";
+  const title: string = "New poll created for group: " + pollGroup.name;
   const description: string = "Question: " + poll.question;
   const embed = [
     {

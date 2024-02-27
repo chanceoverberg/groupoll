@@ -22,13 +22,14 @@ model PollGroup {
 }
 
 model Poll {
-  id          String    @id @default(uuid())
+  id          String     @id @default(uuid())
   urlId       Int
   question    String
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime   @default(now())
   pollGroupId String
-  pollGroup   PollGroup @relation(fields: [pollGroupId], references: [id])
+  pollGroup   PollGroup  @relation(fields: [pollGroupId], references: [id])
   options     Option[]
+  response    Response[]
 
   @@unique([urlId, pollGroupId])
   @@index([pollGroupId])
@@ -47,9 +48,13 @@ model Option {
 model Response {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
+  pollId    String
+  poll      Poll     @relation(fields: [pollId], references: [id])
   optionId  String
   option    Option   @relation(fields: [optionId], references: [id])
   ipAddress String
 
+  @@unique([ipAddress, pollId])
   @@index([optionId])
+  @@index([pollId])
 }

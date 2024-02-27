@@ -10,7 +10,7 @@ interface IInputOptions {
   placeholder: string;
 }
 
-// TODO: add data validation here including min and max character length
+// TODO (ITF): add data validation here including min and max character length
 
 export default function Form({ pollGroupId }: { pollGroupId: string }) {
   const initialOptions: IInputOptions[] = [

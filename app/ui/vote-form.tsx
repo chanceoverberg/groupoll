@@ -1,4 +1,4 @@
-import { getPoll, submitVote } from "../lib/actions";
+import { getHasVoted, getPoll, submitVote } from "../lib/actions";
 import { OptionRow } from "./option-row";
 import { Poll } from "@/types/models";
 import Link from "next/link";
@@ -14,7 +14,7 @@ export default async function Form(props: IProps) {
   const { pollGroupId, urlId } = props;
   const poll: Poll | undefined = await getPoll(pollGroupId, +urlId);
 
-  const submiteVoteWithId = submitVote.bind(null, pollGroupId, +urlId);
+  const submiteVoteWithId = submitVote.bind(null, pollGroupId, poll);
 
   return (
     <form action={submiteVoteWithId} className="h-full pb-8">

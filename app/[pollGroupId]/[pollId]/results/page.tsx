@@ -4,11 +4,11 @@ import { ResponseRow } from "@/app/ui/response-row";
 import { ResultsHeader } from "@/app/ui/results-header";
 import { PollResults } from "@/types/models";
 
-/* TODO: I THINK this page (and probably all other pages) are being cached. Look into how/when
+/* TODO (FYI): I THINK this page (and probably all other pages) are being cached. Look into how/when
   to revalidate these. Not sure if can be done with revalidate path the way I want it to.
   I also want the results page to update live (or every few seconds) if possible. */
 
-// TODO: handle undefined more gracefully
+// TODO (FYI): handle undefined more gracefully
 
 export default async function Page({
   params,
@@ -18,6 +18,13 @@ export default async function Page({
   const results: PollResults | undefined = await getPollResults(params.pollGroupId, +params.pollId);
   const createdAt =
     results?.createdAt?.toLocaleTimeString() + " on " + results?.createdAt?.toDateString();
+
+  results?.optionResults?.sort((or1, or2) => {
+    if (or1.responseCount != undefined && or2.responseCount != undefined) {
+      return or2.responseCount - or1.responseCount;
+    }
+    return 0;
+  });
 
   return (
     <main className="flex h-screen flex-col items-center text-center justify-center pt-6 pb-36">

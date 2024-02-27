@@ -1,17 +1,20 @@
 import Link from "next/link";
 import { PollRow } from "../ui/poll-row";
 import { getPollGroup, getPollsForGroup } from "../lib/actions";
+import { notFound } from "next/navigation";
 
-// TODO: add incremental loading for polls via scrolling or pagination
+// TODO (u/o): add incremental loading for polls via scrolling or pagination
 
 export default async function Page({ params }: { params: { pollGroupId: string } }) {
-  const data = await Promise.all([
-    getPollGroup(params.pollGroupId),
-    getPollsForGroup(params.pollGroupId),
-  ]);
+  const pollGroup = await getPollGroup(params.pollGroupId);
+  if (!pollGroup) {
+    notFound();
+  }
+
+  const polls = await getPollsForGroup(params.pollGroupId);
 
   let totalVotes = 0;
-  data[1].map((poll) => {
+  polls.map((poll) => {
     poll.options.map((option) => {
       totalVotes += option.responses.length;
     });
@@ -19,16 +22,16 @@ export default async function Page({ params }: { params: { pollGroupId: string }
 
   return (
     <main className="flex h-screen flex-col items-center justify-center pt-12 pb-28">
-      <h1 className="text-2xl text-wrap">{data[0]?.name}</h1>
+      <h1 className="text-2xl text-wrap">{pollGroup.name}</h1>
       <div className="w-full sm:w-4/5 xl:w-3/5 2xl:w-2/5 max-h-full pl-3 pr-3">
         <div>
           <div className="text-left text-md flex flex-row justify-between">
-            <p>Poll count: {data[1].length}</p>
+            <p>Poll count: {polls.length}</p>
             <p>Total votes: {totalVotes}</p>
           </div>
         </div>
         <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 min-h-56 h-full overflow-y-auto">
-          {data[1].map((poll, i) => {
+          {polls.map((poll, i) => {
             let responseCount = 0;
             poll.options?.map((option) => {
               responseCount += option.responses?.length ?? 0;

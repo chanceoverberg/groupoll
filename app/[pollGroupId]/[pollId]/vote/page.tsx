@@ -1,4 +1,3 @@
-import BackToGroup from "@/app/ui/back-to-group";
 import Form from "@/app/ui/vote-form";
 
 export default async function Page({

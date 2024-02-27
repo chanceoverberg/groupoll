@@ -6,7 +6,7 @@ import Form from "@/app/ui/create-poll-form";
 export default function Page({ params }: { params: { pollGroupId: string } }) {
   return (
     <main className="flex min-h-screen flex-col items-center text-center justify-center">
-      <div>
+      <div className="w-full md:w-3/5 lg:w-2/5">
         <h1 className="text-2xl">Create a new poll</h1>
         <Form pollGroupId={params.pollGroupId} />
       </div>
