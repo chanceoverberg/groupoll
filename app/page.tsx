@@ -1,7 +1,6 @@
 import Form from "@/app/ui/create-group-form";
 
-// TODO (FYI): consider adding a list of recent groups I have visited. Would probably have to store them in local storage
-// TODO (ITF): add data validation here including character length
+// TODO (ITF): Add a list of recent groups I have visited. Would probably have to store them in local storage
 
 export default function Home() {
   return (

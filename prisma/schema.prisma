@@ -1,3 +1,5 @@
+// TODO (ITF): Update main branch with latest schema
+
 generator client {
   provider = "prisma-client-js"
 }

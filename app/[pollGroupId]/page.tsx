@@ -4,6 +4,7 @@ import { getPollGroup, getPollsForGroup } from "../lib/actions";
 import { notFound } from "next/navigation";
 
 // TODO (u/o): add incremental loading for polls via scrolling or pagination
+// TODO (ITF): Wrap components that fetch data in Suspense. Can just use a loading spinner for now
 
 export default async function Page({ params }: { params: { pollGroupId: string } }) {
   const pollGroup = await getPollGroup(params.pollGroupId);

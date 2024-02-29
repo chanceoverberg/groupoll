@@ -1,18 +1,21 @@
 "use client";
 
 import { Button } from "@/app/ui/button";
-import { createPoll } from "../lib/actions";
-import { useState } from "react";
+import { CreatePollState, createPoll } from "../lib/actions";
+import { Fragment, useState } from "react";
 import { SubmitButton } from "./submit-button";
+import { useFormState } from "react-dom";
 
 interface IInputOptions {
   id: string;
   placeholder: string;
 }
 
-// TODO (ITF): add data validation here including min and max character length
-
 export default function Form({ pollGroupId }: { pollGroupId: string }) {
+  const initialState: CreatePollState = { message: null, errors: null };
+  const createPollWithId = createPoll.bind(null, pollGroupId);
+  const [state, dispatch] = useFormState(createPollWithId, initialState);
+
   const initialOptions: IInputOptions[] = [
     {
       id: "option-1",
@@ -52,13 +55,11 @@ export default function Form({ pollGroupId }: { pollGroupId: string }) {
     );
   };
 
-  const createPollWithId = createPoll.bind(null, pollGroupId);
-
   return (
-    <form action={createPollWithId} className="flex flex-col text-left">
+    <form action={dispatch} className="flex flex-col text-left">
       <p className="pt-2">Title</p>
       <input
-        id="poll"
+        id="pollTitle"
         name="pollTitle"
         placeholder="Type your question here"
         className="text-white rounded-md border m-1
@@ -73,15 +74,26 @@ export default function Form({ pollGroupId }: { pollGroupId: string }) {
             overflow-y-scroll
             "
       />
+      <div id="poll-title-error" aria-live="polite" aria-atomic="true">
+        {state?.errors &&
+          state.errors.map(
+            (error, i) =>
+              error.path[0] == "pollTitle" && (
+                <p className="text-sm text-red-500" key={error.message}>
+                  {error.message}
+                </p>
+              )
+          )}
+      </div>
       <p className="pt-2">Options</p>
       {options.map((option, i) => {
         return (
-          <input
-            key={i}
-            id={option.id}
-            name="option"
-            placeholder={option.placeholder}
-            className="text-white rounded-md border m-1
+          <Fragment key={i}>
+            <input
+              id={option.id}
+              name="pollOption"
+              placeholder={option.placeholder}
+              className="text-white rounded-md border m-1
                         border-slate-700
                         py-2 pl-5 text-sm
                         placeholder:text-gray-500
@@ -90,9 +102,29 @@ export default function Form({ pollGroupId }: { pollGroupId: string }) {
                         focus-visible:outline-offset-2 
                         focus-visible:outline-violet-700
                         bg-violet-1000"
-          />
+            />
+            <div id={`poll-option-error-${i}`} aria-live="polite" aria-atomic="true">
+              {state?.errors &&
+                state.errors.map(
+                  (error) =>
+                    error.path[0] == "pollOptions" &&
+                    error.path[1] == i && (
+                      <p className="text-sm text-red-500" key={error.message}>
+                        {error.message}
+                      </p>
+                    )
+                )}
+            </div>
+          </Fragment>
         );
       })}
+      <div id="missing-fields-error" aria-live="polite" aria-atomic="true">
+        {state.message && !state.errors && (
+          <p className="text-sm text-red-500" key={state.message}>
+            {state.message}
+          </p>
+        )}
+      </div>
       <div className="flex flex-row items-center">
         <Button type="button" onClick={addOption} className="w-2/5">
           Add Option
