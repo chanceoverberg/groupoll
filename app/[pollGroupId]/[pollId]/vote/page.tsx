@@ -1,7 +1,6 @@
-import { getHasVoted, getPoll } from "@/app/lib/actions";
+import { getPoll } from "@/app/lib/actions";
 import Form from "@/app/ui/vote-form";
 import { Poll } from "@prisma/client";
-import ip from "ip";
 
 export default async function Page({
   params,
@@ -9,11 +8,6 @@ export default async function Page({
   params: { pollGroupId: string; pollId: string };
 }) {
   const poll: Poll | undefined = await getPoll(params.pollGroupId, +params.pollId);
-  const ipAddress = ip.address();
-  const hasVoted = await getHasVoted(params.pollId, ipAddress);
-
-  console.log("ip address: " + ipAddress);
-  console.log("hasVoted: " + hasVoted);
 
   return (
     <main className="flex h-screen flex-col items-center text-center justify-center pt-12 pb-20">

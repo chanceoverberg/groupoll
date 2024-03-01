@@ -270,14 +270,19 @@ export async function getPoll(pollGroupId: string, pollUrlId: number): Promise<P
 
   const ipAddress = ip.address();
 
-  if (await getHasVoted(poll.id, ipAddress)) {
+  if (await getHasVoted(poll.id, pollGroupId, pollUrlId, ipAddress)) {
     redirect(`/${pollGroupId}/${poll.urlId}/results`);
   }
 
   return poll;
 }
 
-export async function getHasVoted(pollId: string | undefined, ipAddress: string): Promise<boolean> {
+export async function getHasVoted(
+  pollId: string | undefined,
+  pollGroupId: string,
+  pollUrlId: number,
+  ipAddress: string
+): Promise<boolean> {
   if (!pollId) {
     return false;
   }
@@ -292,6 +297,11 @@ export async function getHasVoted(pollId: string | undefined, ipAddress: string)
       },
     });
 
+    console.log("ip address: " + ipAddress);
+    console.log("poll id:" + pollId);
+    console.log("response:" + response);
+
+    revalidatePath(`/${pollGroupId}/${pollUrlId}/vote`);
     return response == null ? false : true;
   } catch (error) {
     return false;
@@ -353,6 +363,7 @@ export async function submitVote(
   }
 
   revalidatePath(`/${pollGroupId}/${poll.urlId}`);
+  revalidatePath(`/${pollGroupId}/${poll.urlId}/vote`);
   redirect(`/${pollGroupId}/${poll.urlId}/results`);
 }
 
