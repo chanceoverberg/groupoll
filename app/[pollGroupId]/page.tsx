@@ -2,9 +2,10 @@ import Link from "next/link";
 import { PollRow } from "../ui/poll-row";
 import { getPollGroup, getPollsForGroup } from "../lib/actions";
 import { notFound } from "next/navigation";
+import StoreRecentGroups from "../ui/store-recent-groups";
 
 // TODO (u/o): add incremental loading for polls via scrolling or pagination
-// TODO (ITF): Wrap components that fetch data in Suspense. Can just use a loading spinner for now
+// TODO (u/o): Wrap components that fetch data in Suspense. Can just use a loading spinner for now
 
 export default async function Page({ params }: { params: { pollGroupId: string } }) {
   const pollGroup = await getPollGroup(params.pollGroupId);
@@ -53,7 +54,7 @@ export default async function Page({ params }: { params: { pollGroupId: string }
           <Link
             href={`/${params.pollGroupId}/create`}
             className="rounded-lg bg-violet-800 px-3 py-3 
-                    text-sm font-medium text-white hover:bg-violet-900 "
+                    text-sm font-medium text-white hover:bg-violet-900"
           >
             Add Poll
           </Link>
@@ -66,6 +67,7 @@ export default async function Page({ params }: { params: { pollGroupId: string }
           </Link>
         </div>
       </div>
+      <StoreRecentGroups pollGroupId={params.pollGroupId} pollGroupName={pollGroup.name} />
     </main>
   );
 }
