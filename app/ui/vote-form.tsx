@@ -6,6 +6,7 @@ import { Poll } from "@/types/models";
 import Link from "next/link";
 import { SubmitButton } from "./submit-button";
 import { useFormState } from "react-dom";
+import { useEffect, useState } from "react";
 
 interface IProps {
   poll: Poll | undefined;
@@ -17,9 +18,29 @@ export default function Form(props: IProps) {
   const submiteVoteWithId = submitVote.bind(null, poll?.pollGroupId ?? "", poll);
   const [state, dispatch] = useFormState(submiteVoteWithId, initialState);
 
+  const [ipAddress, setIpAddress] = useState();
+
+  useEffect(() => {
+    fetch("https://api.ipify.org/?format=json", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("test fetch");
+        console.log(data.ip);
+        console.log();
+        setIpAddress(data.ip);
+      });
+  }, []);
+
   return (
     <form action={dispatch} className="h-full pb-8">
-      <h1 className="text-2xl">{poll?.question}</h1>
+      <h1 className="text-2xl" id={ipAddress}>
+        {poll?.question}
+      </h1>
       <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 h-full overflow-y-auto">
         {poll?.options?.map((option, index) => {
           return <OptionRow key={index} option={option.option ?? ""} id={option.id} />;
