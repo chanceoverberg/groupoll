@@ -247,8 +247,6 @@ export async function getPollResults(pollGroupId: string, pollUrlId: number) {
 export async function getPoll(pollGroupId: string, pollUrlId: number): Promise<Poll | undefined> {
   let poll: Poll | null;
 
-  revalidatePath(`/${pollGroupId}/${pollUrlId}/vote`);
-
   try {
     poll = await prisma.poll.findUnique({
       where: {
@@ -270,21 +268,25 @@ export async function getPoll(pollGroupId: string, pollUrlId: number): Promise<P
     throw new Error("Database error: Failed to retrieve poll.");
   }
 
-  const ipAddress = ip.address();
+  const ipFetchResponse = await fetch("https://api.ipify.org/?format=json", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
-  if (await getHasVoted(poll.id, pollGroupId, pollUrlId, ipAddress)) {
+  const ipFetchJSON = await ipFetchResponse.json();
+
+  const ipAddress = ipFetchJSON.ip;
+
+  if (await getHasVoted(poll.id, ipAddress)) {
     redirect(`/${pollGroupId}/${poll.urlId}/results`);
   }
 
   return poll;
 }
 
-export async function getHasVoted(
-  pollId: string | undefined,
-  pollGroupId: string,
-  pollUrlId: number,
-  ipAddress: string
-): Promise<boolean> {
+export async function getHasVoted(pollId: string | undefined, ipAddress: string): Promise<boolean> {
   if (!pollId) {
     return false;
   }
@@ -299,11 +301,6 @@ export async function getHasVoted(
       },
     });
 
-    console.log("ip address: " + ipAddress);
-    console.log("poll id:" + pollId);
-    console.log("response:" + response);
-
-    revalidatePath(`/${pollGroupId}/${pollUrlId}/vote`);
     return response == null ? false : true;
   } catch (error) {
     return false;
@@ -345,7 +342,16 @@ export async function submitVote(
 
   const { voteOption } = validatedFields.data;
 
-  const ipAddress = ip.address();
+  const ipFetchResponse = await fetch("https://api.ipify.org/?format=json", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const ipFetchJSON = await ipFetchResponse.json();
+
+  const ipAddress = ipFetchJSON.ip;
 
   try {
     await prisma.response.create({
@@ -365,7 +371,6 @@ export async function submitVote(
   }
 
   revalidatePath(`/${pollGroupId}/${poll.urlId}`);
-  revalidatePath(`/${pollGroupId}/${poll.urlId}/vote`);
   redirect(`/${pollGroupId}/${poll.urlId}/results`);
 }
 
