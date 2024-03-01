@@ -16,7 +16,9 @@ export function RecentGroups() {
   useEffect(() => {
     try {
       setRecentGroups(JSON.parse(localStorage.getItem("pollGroups") ?? ""));
-    } catch (error) {}
+    } catch (error) {
+      // Continue
+    }
   }, []);
 
   return (

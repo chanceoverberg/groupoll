@@ -8,8 +8,6 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import ip from "ip";
 
-const testIpAddress = "e";
-
 // TODO (u/o): change "get" to "fetch" and move those functions to a different file in lib called data.ts
 
 const FormSchema = z.object({

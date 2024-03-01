@@ -77,7 +77,7 @@ export default function Form({ pollGroupId }: { pollGroupId: string }) {
       <div id="poll-title-error" aria-live="polite" aria-atomic="true">
         {state?.errors &&
           state.errors.map(
-            (error, i) =>
+            (error) =>
               error.path[0] == "pollTitle" && (
                 <p className="text-sm text-red-500" key={error.message}>
                   {error.message}

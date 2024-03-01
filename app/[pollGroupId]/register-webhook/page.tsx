@@ -12,7 +12,7 @@ export default function Home({ params }: { params: { pollGroupId: string } }) {
             Open your <b>Server Settings</b> and head into the <b>Integrations</b> tab.
           </li>
           <li>
-            Click the <b>"Create Webhook"</b> button to create a new webhook!
+            Click the <b>Create Webhook</b> button to create a new webhook!
           </li>
           <li>
             Paste the webhook below and click <b>Register webhook</b>. See{" "}

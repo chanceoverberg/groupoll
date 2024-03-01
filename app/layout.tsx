@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { HomeIcon } from "@heroicons/react/24/outline";
+import React from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
