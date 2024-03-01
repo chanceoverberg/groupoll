@@ -270,8 +270,6 @@ export async function getPoll(pollGroupId: string, pollUrlId: number): Promise<P
 
   const ipAddress = ip.address();
 
-  console.log("Checking for vote with ip address: " + ipAddress + " and poll id " + poll.id);
-
   if (await getHasVoted(poll.id, ipAddress)) {
     redirect(`/${pollGroupId}/${poll.urlId}/results`);
   }
@@ -280,8 +278,6 @@ export async function getPoll(pollGroupId: string, pollUrlId: number): Promise<P
 }
 
 export async function getHasVoted(pollId: string | undefined, ipAddress: string): Promise<boolean> {
-  console.log("start of getHasVoted with ip address: " + ipAddress);
-
   if (!pollId) {
     return false;
   }
@@ -296,11 +292,9 @@ export async function getHasVoted(pollId: string | undefined, ipAddress: string)
       },
     });
 
-    console.log("prisma response for ip address " + ipAddress + " and poll id: " + pollId);
-
     return response == null ? false : true;
   } catch (error) {
-    throw new Error("Database error: Failed to check for existing vote.");
+    return false;
   }
 }
 
