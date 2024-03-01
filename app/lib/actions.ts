@@ -6,7 +6,6 @@ import { generateUrlId } from "@/utils/url-id";
 import { OptionResult, Poll, PollGroup, PollResults } from "@/types/models";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import ip from "ip";
 
 // TODO (u/o): change "get" to "fetch" and move those functions to a different file in lib called data.ts
 
