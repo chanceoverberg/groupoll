@@ -16,7 +16,7 @@ export default function Form() {
         placeholder="Group Name"
         className="text-white rounded-md border m-1
             border-slate-700
-            py-2 pl-5 text-sm
+            py-2 pl-5 text-base
             placeholder:text-gray-500
             focus-visible:outline 
             focus-visible:outline-2 

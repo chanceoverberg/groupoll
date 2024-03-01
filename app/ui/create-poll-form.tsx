@@ -64,7 +64,7 @@ export default function Form({ pollGroupId }: { pollGroupId: string }) {
         placeholder="Type your question here"
         className="text-white rounded-md border m-1
             border-slate-700
-            py-2 pl-5 text-sm
+            py-2 pl-5 text-base
             placeholder:text-gray-500
             focus-visible:outline 
             focus-visible:outline-2 
@@ -95,7 +95,7 @@ export default function Form({ pollGroupId }: { pollGroupId: string }) {
               placeholder={option.placeholder}
               className="text-white rounded-md border m-1
                         border-slate-700
-                        py-2 pl-5 text-sm
+                        py-2 pl-5 text-base
                         placeholder:text-gray-500
                         focus-visible:outline 
                         focus-visible:outline-2 

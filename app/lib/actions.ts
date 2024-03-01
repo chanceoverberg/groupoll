@@ -462,7 +462,7 @@ export async function postDiscordMessage(pollGroup: PollGroup, poll: Poll, webho
     {
       title: title,
       description: description,
-      url: `http://localhost:3000/${pollGroup.id}/${poll.urlId}/vote`,
+      url: `https://www.groupoll.net/${pollGroup.id}/${poll.urlId}/vote`,
     },
   ];
 
