@@ -267,26 +267,14 @@ export async function getPoll(pollGroupId: string, pollUrlId: number): Promise<P
     throw new Error("Database error: Failed to retrieve poll.");
   }
 
-  const ipFetchResponse = await fetch("https://api.ipify.org/?format=json", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  const ipFetchJSON = await ipFetchResponse.json();
-
-  const ipAddress = ipFetchJSON.ip;
-
-  if (await getHasVoted(poll.id, ipAddress)) {
-    redirect(`/${pollGroupId}/${poll.urlId}/results`);
-  }
-
   return poll;
 }
 
-export async function getHasVoted(pollId: string | undefined, ipAddress: string): Promise<boolean> {
-  if (!pollId) {
+export async function getHasVoted(
+  pollId: string | undefined,
+  ipAddress: string | undefined
+): Promise<boolean> {
+  if (!pollId || !ipAddress) {
     return false;
   }
 
@@ -316,6 +304,7 @@ export type SubmitVoteState = {
 export async function submitVote(
   pollGroupId: string,
   poll: Poll | undefined,
+  data: any,
   prevState: SubmitVoteState,
   formData: FormData
 ) {
@@ -335,22 +324,26 @@ export async function submitVote(
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "No option selected. Cannot submit vote.",
+      message: "",
     };
   }
 
   const { voteOption } = validatedFields.data;
 
-  const ipFetchResponse = await fetch("https://api.ipify.org/?format=json", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  let ipAddress;
 
-  const ipFetchJSON = await ipFetchResponse.json();
+  if (data && data.ip) {
+    ipAddress = data.ip;
+  }
 
-  const ipAddress = ipFetchJSON.ip;
+  if (await getHasVoted(poll.id, ipAddress)) {
+    return {
+      errors: {
+        voteOption: [],
+      },
+      message: "You have already voted.",
+    };
+  }
 
   try {
     await prisma.response.create({

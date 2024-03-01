@@ -6,7 +6,7 @@ import { Poll } from "@/types/models";
 import Link from "next/link";
 import { SubmitButton } from "./submit-button";
 import { useFormState } from "react-dom";
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 
 interface IProps {
   poll: Poll | undefined;
@@ -14,33 +14,25 @@ interface IProps {
 
 export default function Form(props: IProps) {
   const { poll } = props;
+
+  const fetcher = (...args: any) => fetch(args).then((res) => res.json());
+  const { data, error } = useSWR("https://api.ipify.org/?format=json", fetcher);
+
   const initialState: SubmitVoteState = { message: "", errors: {} };
-  const submiteVoteWithId = submitVote.bind(null, poll?.pollGroupId ?? "", poll);
+  const submiteVoteWithId = submitVote.bind(null, poll?.pollGroupId ?? "", poll, data);
   const [state, dispatch] = useFormState(submiteVoteWithId, initialState);
 
-  const [ipAddress, setIpAddress] = useState();
+  if (data) {
+    submitVote.bind(null, poll?.pollGroupId ?? "", poll, data);
+  }
 
-  useEffect(() => {
-    fetch("https://api.ipify.org/?format=json", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("test fetch");
-        console.log(data.ip);
-        console.log();
-        setIpAddress(data.ip);
-      });
-  }, []);
+  if (error) {
+    console.log(error);
+  }
 
   return (
     <form action={dispatch} className="h-full pb-8">
-      <h1 className="text-2xl" id={ipAddress}>
-        {poll?.question}
-      </h1>
+      <h1 className="text-2xl">{poll?.question}</h1>
       <div className="rounded-xl mb-4 border-solid border-2 border-violet-800 h-full overflow-y-auto">
         {poll?.options?.map((option, index) => {
           return <OptionRow key={index} option={option.option ?? ""} id={option.id} />;
@@ -55,7 +47,7 @@ export default function Form(props: IProps) {
           ))}
       </div>
       <div id="missing-fields-error" aria-live="polite" aria-atomic="true">
-        {state.message && !state.errors && (
+        {state.message && (
           <p className="text-sm text-red-500" key={state.message}>
             {state.message}
           </p>
