@@ -247,6 +247,8 @@ export async function getPollResults(pollGroupId: string, pollUrlId: number) {
 export async function getPoll(pollGroupId: string, pollUrlId: number): Promise<Poll | undefined> {
   let poll: Poll | null;
 
+  revalidatePath(`/${pollGroupId}/${pollUrlId}/vote`);
+
   try {
     poll = await prisma.poll.findUnique({
       where: {
