@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} text-white`}>
+      <body className={`${inter.className} text-white h-dvh`}>
         <Link href="/" className="absolute top-2 left-2 text-white">
           <HomeIcon className="w-5 h-5" />
         </Link>

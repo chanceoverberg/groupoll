@@ -24,7 +24,7 @@ export default async function Page({ params }: { params: { pollGroupId: string }
   });
 
   return (
-    <main className="flex h-screen flex-col items-center justify-center pt-12 pb-28">
+    <main className="flex h-full flex-col items-center justify-center pt-12 pb-28">
       <h1 className="text-2xl text-wrap">{pollGroup.name}</h1>
       <div className="w-full sm:w-4/5 xl:w-3/5 2xl:w-2/5 max-h-full pl-3 pr-3">
         <div>

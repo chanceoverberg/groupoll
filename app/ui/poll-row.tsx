@@ -1,6 +1,7 @@
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import { ChartBarIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { PollCreatedTime } from "./poll-created-time";
 
 interface IProps {
   pollGroupId: string;
@@ -12,7 +13,7 @@ interface IProps {
 
 export function PollRow(props: IProps) {
   const { pollGroupId, urlId, question, created, responseCount } = props;
-  const creationTime = created?.toLocaleTimeString() + " - " + created?.toDateString();
+
   return (
     <Link href={`/${pollGroupId}/${urlId}/vote`}>
       <div
@@ -22,7 +23,7 @@ export function PollRow(props: IProps) {
         <div>
           <p>{question}</p>
           <CalendarDaysIcon className="h-5 w-5 absolute bottom-2 left-1" />
-          <p className="text-sm text-gray-400 absolute bottom-2 left-7">{creationTime}</p>
+          <PollCreatedTime date={created} />
         </div>
         <div className="flex flex-row">
           <p className="pr-1 absolute bottom-1 right-6">{responseCount}</p>

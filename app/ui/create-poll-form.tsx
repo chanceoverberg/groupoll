@@ -6,6 +6,10 @@ import { Fragment, useState } from "react";
 import { SubmitButton } from "./submit-button";
 import { useFormState } from "react-dom";
 
+// TODO: (ITF): make mobile enter key a next button instead of go and put
+// focus in next field. Also, when you add a field, if the most recent field
+// has something in it, auto focus to it maybe
+
 interface IInputOptions {
   id: string;
   placeholder: string;

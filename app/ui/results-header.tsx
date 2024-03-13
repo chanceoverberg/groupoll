@@ -1,6 +1,8 @@
+import { CreatedAt } from "./created-at";
+
 interface IProps {
   title: string;
-  created: string;
+  created: Date | undefined;
   responseCount: number;
 }
 
@@ -11,7 +13,7 @@ export function ResultsHeader(props: IProps) {
       <h1 className="text-2xl">{title}</h1>
       <div className="text-md flex flex-row justify-between">
         <p>Total votes: {responseCount}</p>
-        <p className="w-3/5 text-right">Created at {created}</p>
+        <CreatedAt date={created} />
       </div>
     </div>
   );

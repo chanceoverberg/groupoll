@@ -16,8 +16,6 @@ export default async function Page({
   params: { pollGroupId: string; pollId: string };
 }) {
   const results: PollResults | undefined = await getPollResults(params.pollGroupId, +params.pollId);
-  const createdAt =
-    results?.createdAt?.toLocaleTimeString() + " on " + results?.createdAt?.toDateString();
 
   results?.optionResults?.sort((or1, or2) => {
     if (or1.responseCount != undefined && or2.responseCount != undefined) {
@@ -27,11 +25,11 @@ export default async function Page({
   });
 
   return (
-    <main className="flex h-screen flex-col items-center text-center justify-center pt-6 pb-36">
+    <main className="flex min-h-full flex-col items-center text-center justify-center pt-6 pb-36">
       <div className="w-full sm:w-4/5 xl:w-3/5 2xl:w-2/5 max-h-full pl-3 pr-3">
         <ResultsHeader
           title={results?.question ?? ""}
-          created={createdAt ?? ""}
+          created={results?.createdAt}
           responseCount={results?.responseCount ?? 0}
         />
         <div className="rounded-xl mb-2 border-solid border-2 border-violet-800 min-h-56 h-full overflow-y-auto">

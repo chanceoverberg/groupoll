@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Home({ params }: { params: { pollGroupId: string } }) {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
+    <main className="flex min-h-full flex-col items-center justify-center">
       <div className="sm:w-3/5">
         <h1 className="text-2xl pb-1">Add a Discord bot using a webhook</h1>
         <ol className="list-decimal pl-6 pb-2">
